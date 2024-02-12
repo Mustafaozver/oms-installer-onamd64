@@ -1,0 +1,3 @@
+Merhabalar
+
+Bu çalışma kendi linux dağıtımını yapabilmeniz ve bilgisayarınıza debian tabanlı linuz sisteminizi kişisel tercihlerinize göre minimal kurulum yapabilmeniz için tasarlanmıştır.
