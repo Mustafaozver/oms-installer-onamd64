@@ -1,0 +1,25 @@
+{
+  "devDependencies": {
+    "electron": "^28.2.2"
+  },
+  "name": "oms-installer-onamd64",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "ata.js": "^8.0.12"
+  },
+  "scripts": {
+    "test": "npx electron ./Library/Electron/index.js --no-sandbox"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mustafaozver/oms-installer-onamd64.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mustafaozver/oms-installer-onamd64/issues"
+  },
+  "homepage": "https://github.com/Mustafaozver/oms-installer-onamd64#readme"
+}
