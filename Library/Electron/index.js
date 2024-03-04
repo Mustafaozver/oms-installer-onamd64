@@ -1,7 +1,17 @@
 ((ATA)=>{
-	const Electron = require("electron");
+	const Electron = ATA.Require("electron");
 	
-	Electron.app.whenReady().then(() => {
+	const func_stack = {};
+	
+	func_stack["EXIT"] = ()=>{
+		process.exit();
+	};
+	
+	func_stack["LOG"] = (data)=>{
+		console.log("PAGE LOG => ", data.data);
+	};
+	
+	Electron.app.whenReady().then(()=>{
 		const path = ATA.Path.join(ATA.CWD, "./Library/Electron/View/index.html");
 		const preload = ATA.Path.join(ATA.CWD, "./Library/Electron/preload.js");
 		
@@ -27,7 +37,6 @@
 		Win.loadFile(path);
 		
 		Win.webContents.openDevTools(false);
-		Win.webContents.postMessage("i", "i");
 		//Win.maximize();
 		
 		//Win.setAlwaysOnTop(true);
@@ -50,27 +59,48 @@
 		
 		
 		
-		
-		
-		
-		
-		
-		const channel = new Electron.MessageChannelMain();
-		
-		
-		
-		Win.webContents.mainFrame.postMessage("port", { message: 'hello' }, [channel.port2, channel.port1]);
-		
-		channel.port1.onmessage = console.log;
-		channel.port2.onmessage = console.log;
-		
-		console.log({
-			p: channel
+		Win.webContents.on('will-prevent-unload', (event)=>{
+			const choice = Electron.dialog.showMessageBoxSync(Win, {
+				type: 'question',
+				buttons: ['Leave', 'Stay'],
+				title: 'Do you want to leave this site?',
+				message: 'Changes you made may not be saved.',
+				defaultId: 0,
+				cancelId: 1
+			});
+			const leave = (choice === 0)
+			if (leave) {
+				event.preventDefault()
+			}
 		});
 		
 		
 		
 		
-		channel.port1.postMessage({ some: 'message' })
+		func_stack["EVAL"] = (data, event)=>{
+			console.log("EVAL => ", data, event);
+			const resp = eval(data.data);
+			console.log("RESP => ", resp);
+			//event.reply(resp);
+		};
+		
+		ATA.Send = (method, data)=>{
+			Win.webContents.send("msgfromstarter", {
+				method,
+				data
+			});
+		};
+		
+		ATA.OnMessage = (data, event)=>{
+			if(!data.method)return console.log("INVALID PAGE MSG => ", data);
+			const method = data.method;
+			const func = func_stack[method];
+			if(func)return func(data, event);
+			console.log("UNKNOWN PAGE MSG => ", data);
+		};
+		
+		Electron.ipcMain.on("msgfrompage", (event, arg)=>{
+			ATA.OnMessage(arg, event);
+		});
 	});
 })(require("ata.js")());

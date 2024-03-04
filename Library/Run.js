@@ -10,7 +10,7 @@ module.exports=((ATA)=>{
 		});
 	})();
 	
-	const RunCommand = async(cmd, sudo=false)=>{
+	const RunCommand = (cmd, sudo=false)=>{
 		const child = child_process.spawn("sudo", ["-n", "-s", "-E", "bash"], {
 			stdio: "pipe",
 			shell: true,
@@ -25,9 +25,11 @@ module.exports=((ATA)=>{
 			});
 			child.addListener("exit", reject);
 			child.stdin.write("\n" + cmd + "\n");
+			console.log(" RUN => ", cmd, child);
 		});
+		
 		return{
-			answer: await promise,
+			promise,
 			child,
 		};
 	};
