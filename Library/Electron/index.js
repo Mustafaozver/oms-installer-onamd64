@@ -28,10 +28,10 @@
 		
 		Win.webContents.openDevTools(false);
 		Win.webContents.postMessage("i", "i");
-		Win.maximize();
+		//Win.maximize();
 		
-		Win.setAlwaysOnTop(true);
-		Win.setFullScreen(true);
+		//Win.setAlwaysOnTop(true);
+		//Win.setFullScreen(true);
 		Win.setProgressBar(50);
 		Win.setOpacity(50);
 		//Win.setIcon("");

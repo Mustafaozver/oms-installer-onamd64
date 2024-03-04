@@ -11,9 +11,9 @@ module.exports=((ATA)=>{
 	})();
 	
 	const RunCommand = async(cmd, sudo=false)=>{
-		const child = child_process.spawn("bash", [], {
-			//stdio: "inherit",
-			//shell: true,
+		const child = child_process.spawn("sudo", ["-S", "-p", "bash", "-e"], {
+			stdio: "pipe",
+			shell: true,
 			cwd: ATA.CWD,
 		});
 		const promise = new Promise((resolve, reject)=>{
@@ -24,9 +24,12 @@ module.exports=((ATA)=>{
 				reject(data.toString());
 			});
 			child.addListener("exit", reject);
-			if(sudo)child.stdin.write("sudo su\n");
-			//child.stdin.write("1682972\n");
-			child.stdin.write("" + cmd + "\n");
+			
+			if(sudo){
+				child.stdin.write("sudo su\n1682972");
+			}
+			
+			child.stdin.write("\n" + cmd + "\n");
 		});
 		return{
 			answer: await promise,

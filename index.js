@@ -1,7 +1,7 @@
 ((ATA)=>{
 	const CP = ATA.Require("./Library/Run.js");
 	
-	CP.RunCommand("fdisk -l").then((data)=>{
+	CP.RunCommand("fdisk -l", true).then((data)=>{
 		
 		
 		
