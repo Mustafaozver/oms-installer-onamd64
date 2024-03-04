@@ -1,7 +1,28 @@
 ((ATA)=>{
 	const CP = ATA.Require("./Library/Run.js");
+	const Page = ATA.Require("./Controller/Page.js");
 	
-	CP.RunCommand("fdisk -l", true).then((data)=>{
+	
+	
+	
+	CP.RunCommand("lsblk").then((data)=>{
+		
+		
+		
+		
+		console.log("lsblk => ", data.answer);
+	}).catch((data)=>{
+		console.log("ERROR => ", data);
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	CP.RunCommand("fdisk -l").then((data)=>{
 		
 		
 		

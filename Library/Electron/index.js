@@ -47,39 +47,30 @@
 			return false;
 		});
 		
-		//Electron.MessageChannelMain.
 		
 		
-		return;
 		
 		
-		const { BrowserWindow } = require('electron')
-		
-		const child = new BrowserWindow({ parent: top })
-		child.show()
-		top.show()
 		
 		
-		//cp.spawn()
 		
-		/*const View = new Electron.BrowserView();
-		Win.setBrowserView(View);
-		View.setBounds({
-			x: 0,
-			y: 0,
-			width: 1000,
-			height: 1000
+		
+		const channel = new Electron.MessageChannelMain();
+		
+		
+		
+		Win.webContents.mainFrame.postMessage("port", { message: 'hello' }, [channel.port2, channel.port1]);
+		
+		channel.port1.onmessage = console.log;
+		channel.port2.onmessage = console.log;
+		
+		console.log({
+			p: channel
 		});
-		*/
-		//View.webContents.loadFile(ATA.Path.join(ATA.CWD, "./View/index.html"));
-		//View.webContents.loadURL("devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9555/" + ws.name);
-		
-		//Win.loadFile("devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9555/" + ws.name);
 		
 		
 		
 		
-		//Win.loadURL("devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9555/" + ws.name);
+		channel.port1.postMessage({ some: 'message' })
 	});
-	
 })(require("ata.js")());

@@ -11,7 +11,7 @@ module.exports=((ATA)=>{
 	})();
 	
 	const RunCommand = async(cmd, sudo=false)=>{
-		const child = child_process.spawn("sudo", ["-S", "-p", "bash", "-e"], {
+		const child = child_process.spawn("sudo", ["-n", "-s", "-E", "bash"], {
 			stdio: "pipe",
 			shell: true,
 			cwd: ATA.CWD,
@@ -24,11 +24,6 @@ module.exports=((ATA)=>{
 				reject(data.toString());
 			});
 			child.addListener("exit", reject);
-			
-			if(sudo){
-				child.stdin.write("sudo su\n1682972");
-			}
-			
 			child.stdin.write("\n" + cmd + "\n");
 		});
 		return{
@@ -36,8 +31,6 @@ module.exports=((ATA)=>{
 			child,
 		};
 	};
-	
-	RunCommand("1682972"/* root passwd */, true).then(console.log);
 	
 	return{
 		RunCommand,
