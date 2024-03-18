@@ -1,15 +1,6 @@
 module.exports=((ATA)=>{
 	const child_process = ATA.Require("child_process");
 	
-	(()=>{
-		return;
-		const child = child_process.spawn("echo", ["-e", "-s", "-E", "bash"], {
-			//stdio: "inherit",
-			//shell: true,
-			cwd: ATA.CWD,
-		});
-	})();
-	
 	const RunCommand = (cmd, sudo=false)=>{
 		const child = child_process.spawn("sudo", ["-n", "-s", "-E", "bash"], {
 			stdio: "pipe",
@@ -25,7 +16,7 @@ module.exports=((ATA)=>{
 			});
 			child.addListener("exit", reject);
 			child.stdin.write("\n" + cmd + "\n");
-			console.log(" RUN => ", cmd, child);
+			//console.log(" RUN => ", cmd, child);
 		});
 		
 		return{

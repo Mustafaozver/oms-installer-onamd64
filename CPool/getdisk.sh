@@ -1,0 +1,1 @@
+lsblk -b $1 | grep disk

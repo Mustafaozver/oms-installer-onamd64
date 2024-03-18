@@ -1,5 +1,7 @@
 ((ATA)=>{
-	const Electron = ATA.Require("electron");
+	process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+	
+	const Electron = require("electron");
 	
 	const func_stack = {};
 	
@@ -15,10 +17,10 @@
 		const path = ATA.Path.join(ATA.CWD, "./Library/Electron/View/index.html");
 		const preload = ATA.Path.join(ATA.CWD, "./Library/Electron/preload.js");
 		
-		const top = new Electron.BrowserWindow();
+		const Top = new Electron.BrowserWindow();
 		
 		const Win = new Electron.BrowserWindow({
-			parent: top,
+			parent: Top,
 			width: 800,
 			height: 600,
 			webPreferences: {
@@ -31,10 +33,11 @@
 			},
 		});
 		
-		top.hide();
+		Top.hide();
 		Win.show();
 		
 		Win.loadFile(path);
+		//Win.loadURL("http://localhost:1683/");
 		
 		Win.webContents.openDevTools(false);
 		//Win.maximize();
@@ -56,9 +59,6 @@
 			return false;
 		});
 		
-		
-		
-		
 		Win.webContents.on('will-prevent-unload', (event)=>{
 			const choice = Electron.dialog.showMessageBoxSync(Win, {
 				type: 'question',
@@ -74,8 +74,11 @@
 			}
 		});
 		
-		
-		
+		ATA.__ = {
+			Electron,
+			Top,
+			Win,
+		};
 		
 		func_stack["EVAL"] = (data, event)=>{
 			console.log("EVAL => ", data, event);

@@ -1,0 +1,1 @@
+free -b | grep Mem
