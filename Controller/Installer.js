@@ -87,8 +87,6 @@ module.exports=((ATA)=>{
 			
 			const installation_diskim = ATA.__.disks[ATA.__.disks_obj[id]];
 			console.log("Boot Disk => ", installation_diskim);
-			
-			SearchParts();
 		}
 	};
 	
@@ -202,6 +200,7 @@ module.exports=((ATA)=>{
 		const rows = answer.trim().split("\n");
 		const parts_obj = {};
 		const disk = ATA.__.disks[ATA.__.disks_obj[ATA.__.preferences.installation_disk]];
+		let partsSize = 0;
 		const parsed_data = rows.map((row)=>{
 			const data = regex.exec(row.substring(2,row.length).trim());
 			return{
@@ -213,6 +212,7 @@ module.exports=((ATA)=>{
 		}).map((data, index)=>{
 			const id = ATA.UUID.Generate();
 			parts_obj[id] = index;
+			partsSize += data.size;
 			return{
 				...data,
 				disk_id: disk.id,
@@ -228,9 +228,11 @@ module.exports=((ATA)=>{
 			const uuid = uuids[index];
 			Object.assign(parsed_data[index], ParseUUID(uuid));
 		});
+		
 		disk.parts = parsed_data;
-		console.log("SetPartitions => ", parsed_data);
-		console.log("DISK => ", ATA.__.disks[ATA.__.disks_obj[ATA.__.preferences.installation_disk]]);
+		disk.partsSize = partsSize;
+		
+		SearchDiskMap(ATA.__.preferences.installation_disk);
 		
 		/*SetDirectory({
 			ROOT: 
@@ -240,37 +242,41 @@ module.exports=((ATA)=>{
 	const SetDiskMap = (id, answer)=>{
 		if(ATA.__.disks_obj.hasOwnProperty(id)){
 			const disk = ATA.__.disks[ATA.__.disks_obj[id]];
-			const regex_part = /^(?<path>(\S+\d))(\s+)(?<start>(\d+))(\s+)(?<end>(\d+))(.+)$/;
-			const regex_info = /^(?<key>(([^:])+))(:)(\s*)(?<value>(([\.])+))(\s*)$/;
 			
-			const info = {};
+			const regex_part = /^(?<path>(\S+\d))(\s+)(?<start>(\d+))(\s+)(?<end>(\d+))(.+)$/;
+			const regex_info = /^(?<key>(([^:])+))(:)(?<value>(([^:])+))$/;
+			
 			const _map = {};
 			const rows = answer.split("\n");
 			
-			const map = rows.filter(x=>regex_part.test(x)).map(x=>regex_part.exec(x));
-			map.map((match)=>{
+			const map1 = rows.filter(x=>regex_part.test(x)).map(x=>regex_part.exec(x));
+			const map2 = rows.filter(x=>regex_info.test(x)).map(x=>regex_info.exec(x));
+			
+			map1.map((match)=>{
 				_map[match.groups.path] = [
 					parseInt(match.groups.start),
 					parseInt(match.groups.end),
 				];
 			});
 			
-			const infos = rows.filter(x=>regex_info.test(x)).map(x=>regex_info.exec(x));
-			
-			console.log(infos);
-			
-			infos.map((match)=>{
-				console.log(match);
+			map2.map((match)=>{
+				disk[match.groups.key.trim()] = match.groups.value.trim();
 			});
+			
 			
 			disk.parts.map((part, index)=>{
 				const map = _map[part.path];
 				disk.parts[index].SECTOR_F = map[0];
 				disk.parts[index].SECTOR_L = map[1];
 				
-				disk.parts[index].SECTOR_F_ = RenderSize(512 * map[0]);
-				disk.parts[index].SECTOR_L_ = RenderSize(512 * map[1]);
+				const totalSector = map[1] - map[0] + 1;
+				const size = part.size / totalSector;
+				
+				disk.parts[index].SECTOR_F_BYTE = RenderSize(size * map[0]);
+				disk.parts[index].SECTOR_L_BYTE = RenderSize(size * map[1]);
 			});
+			
+			
 		}
 	};
 	
@@ -306,7 +312,7 @@ module.exports=((ATA)=>{
 		const disk = ATA.__.disks[ATA.__.disks_obj[ATA.__.preferences.installation_disk]];
 		ATA.CallSH("getpart", disk.path).then((answer)=>{
 			SetPartitions(answer);
-			SearchDiskMap(ATA.__.preferences.installation_disk);
+			//SearchDiskMap(ATA.__.preferences.installation_disk);
 		});
 	};
 	

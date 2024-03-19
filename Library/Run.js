@@ -8,15 +8,20 @@ module.exports=((ATA)=>{
 			cwd: ATA.CWD,
 		});
 		const promise = new Promise((resolve, reject)=>{
+			let resp = "";
 			child.stdout.once("data", (data)=>{
-				resolve(data.toString());
+				resp += data.toString();
 			});
 			child.stderr.once("data", (data)=>{
 				reject(data.toString());
 			});
-			child.addListener("exit", reject);
+			child.addListener("exit", ()=>{
+				resolve(resp);
+			});
 			child.stdin.write("\n" + cmd + "\n");
-			//console.log(" RUN => ", cmd, child);
+			setTimeout(()=>{
+				child.stdin.write("\nexit\n");
+			}, 10);
 		});
 		
 		return{
