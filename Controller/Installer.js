@@ -1,6 +1,12 @@
 module.exports=((ATA)=>{
 	const os = ATA.Require("os");
 	
+	const Defaults = ATA.Require("./Config/Defaults.json");
+	
+	console.log({
+		Defaults
+	});
+	
 	ATA.__ = {};
 	
 	ATA.__.preferences = {
@@ -19,11 +25,16 @@ module.exports=((ATA)=>{
 			UEFI: false,
 			LMBR: false,
 			BOOT: false,
-			USRF: false,
 			SWAP: false,
 			HOME: false,
 			REPO: false,
-			
+			////
+			USRF: false,
+			TMPF: false,
+			VARF: false,
+			SRVF: false,
+			OPTF: false,
+			// reconvery
 		},
 		
 		
@@ -65,8 +76,6 @@ module.exports=((ATA)=>{
 		}
 		return resp;
 	};
-	
-	
 	
 	const SetInstallationDisk = (id)=>{
 		if(ATA.__.disks_obj.hasOwnProperty(id)){
@@ -122,10 +131,15 @@ module.exports=((ATA)=>{
 			ATA.__.preferences.sparts.UEFI = false;
 			ATA.__.preferences.sparts.LMBR = false;
 			ATA.__.preferences.sparts.BOOT = false;
-			ATA.__.preferences.sparts.USRF = false;
 			ATA.__.preferences.sparts.SWAP = false;
 			ATA.__.preferences.sparts.HOME = false;
 			ATA.__.preferences.sparts.REPO = false;
+			
+			ATA.__.preferences.sparts.USRF = false;
+			ATA.__.preferences.sparts.TMPF = false;
+			ATA.__.preferences.sparts.VARF = false;
+			ATA.__.preferences.sparts.SRVF = false;
+			ATA.__.preferences.sparts.OPTF = false;
 		}
 	};
 	
@@ -141,10 +155,6 @@ module.exports=((ATA)=>{
 		ATA.__.preferences.sparts.BOOT = path || false;
 	};
 	
-	const SetDirectory_USRF = (path=false)=>{
-		ATA.__.preferences.sparts.USRF = path || false;
-	};
-	
 	const SetDirectory_SWAP = (path=false)=>{
 		ATA.__.preferences.sparts.SWAP = path || false;
 	};
@@ -157,16 +167,41 @@ module.exports=((ATA)=>{
 		ATA.__.preferences.sparts.REPO = path || false;
 	};
 	
+	const SetDirectory_USRF = (path=false)=>{
+		ATA.__.preferences.sparts.USRF = path || false;
+	};
+	
+	const SetDirectory_TMPF = (path=false)=>{
+		ATA.__.preferences.sparts.TMPF = path || false;
+	};
+	
+	const SetDirectory_VARF = (path=false)=>{
+		ATA.__.preferences.sparts.VARF = path || false;
+	};
+	
+	const SetDirectory_SRVF = (path=false)=>{
+		ATA.__.preferences.sparts.SRVF = path || false;
+	};
+	
+	const SetDirectory_OPTF = (path=false)=>{
+		ATA.__.preferences.sparts.OPTF = path || false;
+	};
+	
 	const SetDirectory = (data)=>{
 		SetDirectory_ROOT(data.ROOT.id);
 		
 		SetDirectory_UEFI(data.UEFI || false);
 		SetDirectory_LMBR(data.LMBR || false);
 		SetDirectory_BOOT(data.BOOT || false);
-		SetDirectory_USRF(data.USRF || false);
 		SetDirectory_SWAP(data.SWAP || false);
 		SetDirectory_HOME(data.HOME || false);
 		SetDirectory_REPO(data.REPO || false);
+		
+		SetDirectory_USRF(data.USRF || false);
+		SetDirectory_TMPF(data.TMPF || false);
+		SetDirectory_VARF(data.VARF || false);
+		SetDirectory_SRVF(data.SRVF || false);
+		SetDirectory_OPTF(data.OPTF || false);
 	};
 	
 	
@@ -272,13 +307,94 @@ module.exports=((ATA)=>{
 				const totalSector = map[1] - map[0] + 1;
 				const size = part.size / totalSector;
 				
-				disk.parts[index].SECTOR_F_BYTE = RenderSize(size * map[0]);
-				disk.parts[index].SECTOR_L_BYTE = RenderSize(size * map[1]);
+				disk.parts[index].SECTOR_F_BYTE = size * map[0];
+				disk.parts[index].SECTOR_L_BYTE = size * map[1];
+				
+				disk.parts[index].SECTOR_F_PBYTE = RenderSize(size * map[0]);
+				disk.parts[index].SECTOR_L_PBYTE = RenderSize(size * map[1]);
 			});
 			
 			
 		}
 	};
+	
+	
+	
+	
+	
+	
+	
+	const SetTypePartition = (id, num=0, type=20)=>{
+		if(ATA.__.disks_obj.hasOwnProperty(id)){
+			const disk = ATA.__.disks[ATA.__.disks_obj[id]];
+			const ccmd = ["t", num, type];
+			const child = ATA.CP.RunCommand("echo -e \"" + ccmd.join("\n") + "\nw\" | fdisk " + disk.path).child;
+			
+			child.stdout.once("data", (data)=>{
+				const text = data.toString();
+				console.log("DATA => ", text);
+				
+			});
+			
+			child.stderr.once("data", (data)=>{
+				const text = data.toString();
+				console.log("ERROR => ", text);
+			});
+			
+			child.addListener("exit", ()=>{
+				console.log("EXİT");
+			});
+		}
+	};
+	
+	const CreatePartition = (id, num=0, start="", end="", type=20)=>{
+		if(ATA.__.disks_obj.hasOwnProperty(id)){
+			const disk = ATA.__.disks[ATA.__.disks_obj[id]];
+			const ccmd = ["n", num, start, end, type];
+			const child = ATA.CP.RunCommand("echo -e \"" + ccmd.join("\n") + "\nw\" | fdisk " + disk.path).child;
+			
+			child.stdout.once("data", (data)=>{
+				const text = data.toString();
+				console.log("DATA => ", text);
+				
+			});
+			
+			child.stderr.once("data", (data)=>{
+				const text = data.toString();
+				console.log("ERROR => ", text);
+			});
+			
+			child.addListener("exit", ()=>{
+				console.log("EXİT");
+			});
+		}
+	};
+	
+	const DeletePartition = (id, num=0)=>{
+		if(ATA.__.disks_obj.hasOwnProperty(id)){
+			const disk = ATA.__.disks[ATA.__.disks_obj[id]];
+			const ccmd = ["d", num];
+			const child = ATA.CP.RunCommand("echo -e \"" + ccmd.join("\n") + "\nw\" | fdisk " + disk.path).child;
+			
+			child.stdout.once("data", (data)=>{
+				const text = data.toString();
+				console.log("DATA => ", text);
+				
+			});
+			
+			child.stderr.once("data", (data)=>{
+				const text = data.toString();
+				console.log("ERROR => ", text);
+			});
+			
+			child.addListener("exit", ()=>{
+				console.log("EXİT");
+			});
+		}
+	};
+	
+	
+	
 	
 	const Alert = (msg)=>{
 		alert(msg);
@@ -305,6 +421,8 @@ module.exports=((ATA)=>{
 			
 			SetInstallationDisk(available_disks[0].id);
 			SetBootDisk(available_disks[0].id);
+			
+			ATA.Page.WelcomePage();
 		});
 	};
 	
@@ -329,12 +447,12 @@ module.exports=((ATA)=>{
 		console.log("Installer OK");
 		
 		ATA.CP.RunCommand("whoami").promise.then((answer)=>{
-			if(answer.trim() !== "root")return Alert("Run this program as Root!");
-			
-			
+			if(answer.trim() !== "root")return Alert("Need sudo root permits");
 			
 			SearchDisks();
 			SearchRAM();
+		}).catch((err)=>{
+			Alert("Need sudo root permits");
 		});
 		
 		
@@ -347,6 +465,10 @@ module.exports=((ATA)=>{
 		SetInstallationDisk,
 		SetBootDisk,
 		SetDirectory,
+		//
+		SetTypePartition,
+		CreatePartition,
+		DeletePartition,
 		//
 	});
 	

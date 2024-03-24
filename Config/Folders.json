@@ -1,0 +1,65 @@
+{
+	"root_folders": [
+		"/opt",
+		"/run",
+		"/srv",
+		"/sys",
+		"/var",
+		"/boot",
+		"/home",
+		"/root",
+		"/mnt",
+		"/etc",
+		"/usr",
+		"/proc",
+		"/bin",
+		"/sbin",
+		"/dev",
+		"/tmp",
+		"/lib",
+		"/lib32",
+		"/lib64",
+		"/media"
+	],
+	"path": [
+		"/",
+		"/boot",
+		"/home",
+		"/root",
+		"/mnt",
+		"/etc",
+		"/usr",
+		"/proc",
+		"/bin",
+		"/sbin",
+		"/dev",
+		"/tmp",
+		"/lib",
+		"/lib32",
+		"/lib64",
+		"/media",
+		"/opt",
+		"/run",
+		"/srv",
+		"/sys",
+		"/var",
+		"/boot/efi",
+		"/usr/bin",
+		"/usr/local",
+		"/usr/local/bin"
+	],
+	"home_folders":[
+		"./Templates",
+		"./Public",
+		"./Videos",
+		"./Music",
+		"./Pictures",
+		"./Documents",
+		"./Desktop",
+		"./Downloads",
+		"./.MSystem"
+	]
+}
+
+
+

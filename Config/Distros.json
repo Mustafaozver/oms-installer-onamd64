@@ -1,0 +1,28 @@
+{
+	"list":[
+		{
+			"name": "mantic",
+			"base": "ubuntu, debian",
+			"version": "23.10",
+			"packets":[
+				"linux-image-generic",
+				"grub-efi-amd64",
+				"btrfs-progs",
+				"exfatprogs",
+				"exfat-utils"
+			]
+		},
+		{
+			"name": "jammy",
+			"base": "ubuntu, debian",
+			"version": "22.04",
+			"packets": [
+				"linux-image-generic",
+				"grub-efi-amd64",
+				"btrfs-progs",
+				"exfatprogs",
+				"exfat-utils"
+			]
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+	"START": "YES",
+	"Architecture": "amd64",
+	"DesktopEnvironment": "PLASMA",
+	"baseSystem": "mantic",
+	"targetPath": "/mnt/",
+	"username": "admin",
+	"password": "1234",
+	"rootPassword": "1234"
+}
