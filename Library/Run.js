@@ -3,24 +3,33 @@ module.exports=((ATA)=>{
 	const { Terminal } = require("xterm");
 	const { FitAddon } = require("xterm-addon-fit");
 	
-	const terminal = new Terminal();
+	const terminal = new Terminal({
+		cols: 100,
+		cursorBlink: "block",
+		rows: 120,
+		
+	});
 	const fitAddon = new FitAddon();
+	
+	/*terminal.on("key", (key, ev)=>{
+		const char = key.charCodeAt(0);
+		if(key.charCodeAt(0) == 13)return term.write("\n");
+		term.write(key);
+	});*/
 	
 	terminal.loadAddon(fitAddon);
 	fitAddon.fit();
 	
 	const _writein = async(data)=>{
 		//console.warn("%c -> " + data.trim(), "background:#000000;color:#0d6efd");
-		terminal.write("\n");
-		terminal.write("\n" + data.trim());
-		terminal.write("\n");
+		//terminal.writeln("\n>");
+		terminal.writeln("\n> " + data.trim() + "\n");
 	};
 	
 	const _writeout = async(data)=>{
 		//console.warn("%c <- " + data.trim(), "background:#000000;color:#0dcaf0");
-		terminal.write("\n");
-		terminal.write("\n" + data.trim());
-		terminal.write("\n");
+		//terminal.writeln("\n");
+		terminal.writeln("\n" + data.trim());
 	};
 	
 	const RunCommand = (cmd, time=30)=>{

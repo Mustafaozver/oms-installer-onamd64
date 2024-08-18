@@ -19,7 +19,10 @@
 			ATA.Send("EVAL", "ATA.__.Win.setKiosk(true);");
 			ATA.Installer.Setup();
 			ATA.Page.Setup();
-			
+			ATA.CP.fitAddon.fit();
+			ATA.Setups.push(()=>{
+				ATA.CP.fitAddon.fit();
+			});
 			
 		});
 	};
